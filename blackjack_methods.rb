@@ -1,4 +1,4 @@
-at_exit {puts "\n\n\n	Goodbye!"}
+at_exit {puts "\n\n	Goodbye!"}
 
 def checkfordealerhit(dealer)
 	if dealer.sum > 17
@@ -29,67 +29,29 @@ def checkfordealerhit(dealer)
 end
 
 def checkforwin (dealerhand, dealer, humanhand, human, score)
-	puts "\n\n\n	Hand: #{dealerhand.join(", ")}
-	
-	Dealer: #{dealer}
-	
-	
-	Hand: #{humanhand.join(", ")}
-		
-	You: #{human}"
 	if human > 21
 		score[1] += 1
-		puts "
-			
-	You bust! You lose!
-			
-	"
+		puts "\n\n	>You bust! You lose!"
 	elsif human == 21
 		score[0] += 1
-		puts "
-		
-	Blackjack!  You win!
-	
-	"
+		puts "\n\n	>Blackjack!  You win!"
 	elsif dealer == 21
 		score[1] += 1
-		puts "
-		
-	Dealer gets Blackjack! You lose!
-	
-	"
+		puts "\n\n	Dealer gets Blackjack! You lose!"
 	elsif dealer > 21
 		score[0] += 1
-		puts "
-		
-	Dealer busts! You win!
-			
-		"
+		puts "\n\n	>Dealer busts! You win!"
 	elsif human > dealer
 		score[0] += 1
-		puts "
-		
-	Your total is higher. You win!
-			
-		"
+		puts "\n\n	>Your total is higher. You win!"
 	elsif human < dealer
 		score[1] += 1
-		puts "
-		
-	Your total is lower.  You lose!
-			
-		"
+		puts "\n\n	>Your total is lower.  You lose!"
 	else
-		puts "
-		
-	You and the dealer tie. No win or loss.
-			
-		"
+		puts "\n\n	>You and the dealer tie. No win or loss."
 	end
 	savewinlossrecord(score)
-	puts "	Wins: #{score[0]}  Losses: #{score[1]}
-	
-	Press [Enter] to continue."
+	puts "\n\n	Wins: #{score[0]}  Losses: #{score[1]}"
 end
 
 def deal (player, deck)
@@ -114,20 +76,21 @@ def getwinlossrecord(score)
 	end
 end
 
-def handleinput(desiredinput)
+def handleinput(inputtext)
+	puts inputtext[0]
 	correctinput = false
-	if desiredinput.empty?
-		input = gets.chomp
-			if input.capitalize == "E"
+	if inputtext[1].empty?
+		input = gets.chomp.capitalize
+			if input == "Q"
 				exit
 			end
 	else
 		until correctinput
-			input = gets.chomp
-			if input.capitalize == "E"
+			input = gets.chomp.capitalize
+			if input == "Q"
 				exit
 			end
-			desiredinput.each do |x|
+			inputtext[1].each do |x|
 				if input == x
 					correctinput = true
 					return input
@@ -143,40 +106,6 @@ def initializedeck (deck)
 	deck[12][1]=11
 end
 
-def introduction(score)
-	puts "	Welcome to Blackjack!
-	
-	Wins: #{score[0]}  Losses: #{score[1]}
-	
-	Would you like to read an explanation
-	of what\'s specific to this version?
-						
-	[Y]es or [N]o"
-	input = handleinput(["y","Y","n","N"])
-	if input.capitalize == "Y"
-		puts "	For this version of blackjack,
-	aces are initially treated as having a value of 11.
-		
-	Should you draw a card that would
-	put your total over 21, any \"aces\" you have
-	will be automatically converted to a value of 1.
-	
-	Additionally, both of the dealer\'s first cards are visible.
-		
-	You may [E]xit the script at anytime
-	by entering \"e\" or \"E\".
-					
-	That's all!
-			
-	Press [Enter] to continue."
-		handleinput([])
-	end
-	puts "	Let's play!
-	
-	Press [Enter] to continue."
-	handleinput([])
-end
-
 def performsetup (human, dealer, deck)
 	initializedeck(deck)
 	deal(human, deck)
@@ -189,21 +118,36 @@ def savewinlossrecord(score)
 	IO.write("winlossrecord.txt", score[0].to_s+"\n"+score[1].to_s)
 end
 
-def updategametext (dealerhand, dealertotal, humanhand, humantotal)
-	temparray = Array.new
-	temparray.replace dealerhand
-	temparray[0] = "?"
-	puts	"\n\n\n	Dealer
+def updategametext (dealerhand, humanhand, reveal)
+	if !reveal
+		temparray = Array.new
+		temparray.replace dealerhand
+		temparray[0] = "?"
+		
+		puts "\n\n\n	Dealer
 	
 	Hand: #{temparray.join(", ")}
 			
-	Total: ?+#{dealertotal-dealerhand[0]}
+	Total: ?+#{dealerhand.sum-dealerhand[0]}
 			
 			
 	You
 			
 	Hand: #{humanhand.join(", ")}
 			
-	Total: #{humantotal}
-	"
+	Total: #{humanhand.sum}"
+	else
+		puts "\n\n\n	Dealer
+	
+	Hand: #{dealerhand.join(", ")}
+			
+	Total: #{dealerhand.sum}
+			
+			
+	You
+			
+	Hand: #{humanhand.join(", ")}
+			
+	Total: #{humanhand.sum}"
+	end
 end
